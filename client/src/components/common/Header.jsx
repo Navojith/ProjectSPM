@@ -48,6 +48,22 @@ useEffect(() => {
           </ul>
         </div>
         <div>
+  {!currentUser ? (
+    <a href="/login">
+      <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+        Login
+      </button>
+    </a>
+  ) : (
+    <a href="/profile">
+      <button className="bg-orange-500 hover-bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+        {currentUser?.email?.toString(0)?.toUpperCase()}
+      </button>
+    </a>
+  )}
+</div>
+
+        {/* <div>
            <a href = "/login">
            {!currentUser ? (
                 <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
@@ -61,7 +77,7 @@ useEffect(() => {
                 </a>   
             )}
             
-            </a>  </div>
+            </a>  </div> */}
         </div> 
     </nav>
   );

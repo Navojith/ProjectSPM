@@ -3,11 +3,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { getStorage, ref, listAll, getDownloadURL , deleteObject } from "firebase/storage";
 import '../../CSS/menu.css';
-import { deleteUser } from "firebase/auth";
 import Swal from 'sweetalert2'
+import { useNavigate } from "react-router-dom";
 
 const User = () => {
 const storage = getStorage();
+const navigate = useNavigate();
 
 const [currentUser , setCurrentUser] = useState(null);
 const [images, setImages] = useState([])
@@ -24,32 +25,55 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-  const loadImages = () => {
-    if(currentUser) {
-      const listRef = ref(storage, `gallery/${currentUser.uid}`);
+// useEffect(() => {
+//   const loadImages = () => {
+//     if(currentUser) {
+//       const listRef = ref(storage, `gallery/${currentUser.uid}`);
   
-      listAll(listRef)
-      .then(async(res) => {
-        res.prefixes.forEach((folderRef) => {
+//       listAll(listRef)
+//       .then(async(res) => {
+//         res.prefixes.forEach((folderRef) => {
           
           
-        });
-        res.items.forEach(async(itemRef) => {
-          // All the items under listRef.
-          const url = await getDownloadURL(itemRef)
-          setImages([...images, url]);
-        });
-      }).catch((error) => {
-        alert(error)
-      });
-    }
-  }
-  
-  loadImages();
-  console.log(images);
+//         });
+//         res.items.forEach(async(itemRef) => {
+//           // All the items under listRef.
+//           const url = await getDownloadURL(itemRef)
+//           setImages([...images,url]);
+//         });
+//       }).catch((error) => {
+//         alert(error)
+//       });
+//     }
+//   },[currentUser])
 
-},[currentUser])
+  useEffect(() => {
+    const loadImages = () => {
+      if(currentUser) {
+        const listRef = ref(storage, `gallery/${currentUser.uid}`);
+    
+        listAll(listRef)
+        .then(async(res) => {
+          res.prefixes.forEach((folderRef) => {
+            
+            
+          });
+          res.items.forEach(async(itemRef) => {
+            // All the items under listRef.
+            const url = await getDownloadURL(itemRef)
+            setImages([...images, url]);
+          });
+        }).catch((error) => {
+          alert(error)
+        });
+      }
+    }
+    
+    loadImages();
+    console.log(images);
+  
+  },[currentUser])
+  
 
 //delete Image
 function deleteImage(image){
@@ -66,6 +90,7 @@ function deleteImage(image){
       timer: 2000,
       timerProgressBar: true
   })
+  window.location.reload();
     }).catch((error) => {
     console.log('not deleted');
     Swal.fire({
@@ -147,19 +172,27 @@ function deleteImage(image){
           </div>
         </nav>
         <div style={{padding:"100px"}}></div>
+        < div style={{ padding: "20px" }}>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((image) => 
           <div className="card w-96 bg-base-100 shadow-xl">
             <figure><img src={image} /></figure>
             <div className="card-body w-96 h-30">
               <div className="card-actions justify-end">
-                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full" onClick={() => deleteImage(image)}>Update</button>
+                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full" >
+                 {/* onClick={() => updateImage(image)} */}
+                  Image Preprocessing
+                  {/* <updateModal /> */}
+                </button>
                 <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full" onClick={() => deleteImage(image)}>Delete</button>
               </div>
             </div>
           </div>
           )}
+        </div>  
         </div>
+      </div>
     );
-  };
+};
 
-export default User;
+export default User
