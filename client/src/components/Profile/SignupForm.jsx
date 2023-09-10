@@ -60,13 +60,13 @@ const SignupForm = () => {
           <label className="label">
             <span className="label-text">Email</span>
           </label>
-          <input type="email" placeholder="email" className="input input-bordered" onChange={e=>setEmail(e.target.value)} />
+          <input type="email" placeholder="email" required className="input input-bordered" onChange={e=>setEmail(e.target.value)} />
         </div>
         <div className="form-control">
           <label className="label">
             <span className="label-text">Password</span>
           </label>
-          <input type="password" placeholder="password" className="input input-bordered" onChange={e=>setPassword(e.target.value)}/>
+          <input type="password" placeholder="password" required className="input input-bordered" onChange={e=>setPassword(e.target.value)}/>
         </div>
         <div className="form-control mt-6">
           <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">SIGNUP</button>

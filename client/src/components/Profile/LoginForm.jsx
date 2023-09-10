@@ -59,13 +59,13 @@ const LoginForm = () => {
           <label className="label">
             <span className="label-text">Email</span>
           </label>
-          <input type="email" placeholder="email" className="input input-bordered" onChange={e=>setEmail(e.target.value)} />
+          <input type="email" placeholder="email" className="input input-bordered" required onChange={e=>setEmail(e.target.value) } />
         </div>
         <div className="form-control">
           <label className="label">
             <span className="label-text">Password</span>
           </label>
-          <input type="password" placeholder="password" className="input input-bordered" onChange={e=>setPassword(e.target.value)}/>
+          <input type="password" placeholder="password" className="input input-bordered"required onChange={e=>setPassword(e.target.value)}/>
           <label className="label">
             <a href="/setPassword" className="label-text-alt link link-hover">Forgot password?</a>
           </label>
