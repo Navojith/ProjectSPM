@@ -8,8 +8,25 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase/config";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const Header = () => {
+
+  const [currentUser , setCurrentUser] = useState(null);
+
+useEffect(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // console.log(user);
+      setCurrentUser(user);
+    }
+  }
+)
+},[])
+
   return (
     <nav class="  bg-gray-900">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -31,10 +48,19 @@ const Header = () => {
           </ul>
         </div>
         <div>
-           <a href = "/signup">
-            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
-              SignUp
-            </button>
+           <a href = "/login">
+           {!currentUser ? (
+                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+                Login
+              </button>
+            ) : (
+              <a href ="profile">
+              <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+                {currentUser?.email?.toString(0)?.toUpperCase()}  
+                </button> 
+                </a>   
+            )}
+            
             </a>  </div>
         </div> 
     </nav>

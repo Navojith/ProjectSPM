@@ -3,6 +3,7 @@ import { useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
+import Swal from 'sweetalert2'
 
 const SignupForm = () => {
     const [error , setError] = useState(false)
@@ -20,11 +21,27 @@ const SignupForm = () => {
                 // Signed in 
                 const user = userCredential.user;
                 console.log(user)
-                navigate("/getstarted")
+                Swal.fire({
+                  title: 'Success',
+                  text: 'The user signed up successfully',
+                  icon: 'success',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  timerProgressBar: true
+              })
+                navigate("/login")
                 // ...
             })
             .catch((error) => {
                 setError(true)
+                Swal.fire({
+                  title: 'Error',
+                  text: 'Signup unsuccessful, Try Again',
+                  icon: 'error',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  timerProgressBar: true
+              })
             });
     }
 
@@ -50,14 +67,10 @@ const SignupForm = () => {
             <span className="label-text">Password</span>
           </label>
           <input type="password" placeholder="password" className="input input-bordered" onChange={e=>setPassword(e.target.value)}/>
-          <label className="label">
-            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-          </label>
         </div>
         <div className="form-control mt-6">
           <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">SIGNUP</button>
         </div>
-        {error && <span>Incorrect email or password!</span>}
       </div>
     </div>
   </div>

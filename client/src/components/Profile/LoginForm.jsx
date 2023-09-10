@@ -3,6 +3,7 @@ import { useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
+import Swal from 'sweetalert2'
 
 const LoginForm = () => {
     const [error , setError] = useState(false)
@@ -20,11 +21,27 @@ const LoginForm = () => {
                 // Signed in 
                 const user = userCredential.user;
                 console.log(user)
+                Swal.fire({
+                  title: 'Success',
+                  text: 'The user logged in successfully',
+                  icon: 'success',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  timerProgressBar: true
+              })
                 navigate("/profile")
                 // ...
             })
             .catch((error) => {
                 setError(true)
+                Swal.fire({
+                  title: 'Error',
+                  text: 'Login unsuccessful, Try Again',
+                  icon: 'error',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  timerProgressBar: true
+              })
             });
     }
 
@@ -32,6 +49,7 @@ const LoginForm = () => {
         <form onSubmit={handleLogin}>
         <div className="hero min-h-screen bg-base-200">
   <div className="hero-content flex-col ">
+  <div><h3><b>Don't have an account <a href = "/signup"><u>Signup</u> </a> </b></h3></div>
     <div className="text-center lg:text-left">
       <h1 className="text-5xl font-bold">Login now!</h1>
     </div>
@@ -49,7 +67,7 @@ const LoginForm = () => {
           </label>
           <input type="password" placeholder="password" className="input input-bordered" onChange={e=>setPassword(e.target.value)}/>
           <label className="label">
-            <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+            <a href="/setPassword" className="label-text-alt link link-hover">Forgot password?</a>
           </label>
         </div>
         <div className="form-control mt-6">

@@ -3,6 +3,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { getStorage, ref, listAll, getDownloadURL , deleteObject } from "firebase/storage";
 import '../../CSS/menu.css';
+import { deleteUser } from "firebase/auth";
+import Swal from 'sweetalert2'
 
 const User = () => {
 const storage = getStorage();
@@ -49,63 +51,115 @@ useEffect(() => {
 
 },[currentUser])
 
+//delete Image
 function deleteImage(image){
   console.log(image);
   const desertRef = ref(storage, image);
   // Delete the file
   deleteObject(desertRef).then(() => {
     console.log('deleted');
+    Swal.fire({
+      title: 'Success',
+      text: 'Image Deleted Successfully',
+      icon: 'success',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+  })
     }).catch((error) => {
     console.log('not deleted');
+    Swal.fire({
+      title: 'Error',
+      text: error,
+      icon: 'error',
+      showConfirmButton: false,
+      timer: 1000,
+  })
   });
-};
+// const user = auth.currentUser;
+// //delete User
+// function deleteAccount(user){
+//   console.log(user)
+//   deleteUser(user).then(() => {
+//     Swal.fire({
+//       title: 'Success',
+//       text: 'User logout Successfully',
+//       icon: 'success',
+//       showConfirmButton: false,
+//       timer: 2000,
+//       timerProgressBar: true
+//   })
+//   }).catch((error) => {
+//     console.log('not deleted');
+//     Swal.fire({
+//       title: 'Error',
+//       text: error,
+//       icon: 'error',
+//       showConfirmButton: false,
+//       timer: 1000,
+//   })
+//   });
+
+}
 
 // Create a reference under which you want to list
 
     return (
-      <div>
+      <div style = {{margin:"20px"}}>
         <nav class="  bg-gray-900">
           <div>
             <div>
               <ul>
-            <li>
-            {!currentUser ? (
-                <button>Login</button>
-            ) : (
-                <p>
-                {currentUser?.email?.toString(0)?.toUpperCase()}  
-                </p>     
-            )}
-            </li>
-        <li>
-    <a href = '/getstarted'>
-      Home
-    </a>
-  </li>
-        <li>
-            <a href = '/uploadImage'>
-      UploadImage
-    </a>
-  </li>
-</ul>
-</div>
-</div>
-</nav>
-<div style={{padding:"100px"}}>
-{images.map((image) => 
-  <div className="card w-96 bg-base-100 shadow-xl">
-  <figure><img src={image} /></figure>
-  <div className="card-body w-96 h-30">
-    <div className="card-actions justify-end">
-      <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full" onClick={() => deleteImage(image)}>Delete</button>
-    </div>
-  </div>
-</div>
-)}
- </div>
- </div>
+                <li>
+                  {!currentUser ? (
+                    <button>Login</button>
+                    ) : (
+                    <p>
+                      {currentUser?.email?.toString(0)?.toUpperCase()}  
+                    </p>     
+                    )}
+                </li>
+                <li>
+                  <a href = '/getstarted'>
+                      {/* onClick={() => handleLogout(currentUser.uid)}> */}
+                      Logout
+                  </a>
+                </li>
+                <li>
+                  <a href = '/getstarted'>
+                  Home
+                  </a>
+                </li>
+                <li>
+                  <a href = '/uploadImage'>
+                    UploadImage
+                  </a>
+                </li>
+                <li>
+                  <a href = '/getstarted' >
+                    <button>
+                        Delete Account
+                    </button> 
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div style={{padding:"100px"}}></div>
+          {images.map((image) => 
+          <div className="card w-96 bg-base-100 shadow-xl">
+            <figure><img src={image} /></figure>
+            <div className="card-body w-96 h-30">
+              <div className="card-actions justify-end">
+                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full" onClick={() => deleteImage(image)}>Update</button>
+                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full" onClick={() => deleteImage(image)}>Delete</button>
+              </div>
+            </div>
+          </div>
+          )}
+        </div>
     );
-
-};
+  };
 
 export default User;
