@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const CataractUpload = () => {
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isFileSet, setIsFileSet] = useState(false);
   const [fetchResult, setFetchResult] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -12,36 +15,70 @@ const CataractUpload = () => {
     setIsFileSet(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFundusDetection = async (image) => {
+    const formData = new FormData();
+    formData.append('image', image);
 
-    if (!file) {
-      alert("Please select a file.");
-      return;
+    const response = await fetch('/api/detect/fundus', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('submit');
+
+    if (!response.ok) {
+      alert('Error detecting fundus');
+    } else {
+      const data = await response.json();
+
+      // Check if the image is detected as a fundus before sending it for cataract prediction
+      if (data.is_fundus) {
+        Swal.fire({
+          title:'Fundus Detected',
+          text: 'Uploaded image is a fundus',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        })
+        handleCataractPrediction(image);
+      } else {
+        Swal.fire({
+          title:'Try Again',
+          text: 'Uploaded image is not a fundus',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+      })
+      navigate(`/getstarted`);
+      }
+    }
+  };
+
+  const handleCataractPrediction = async (image) => {
+    const formData = new FormData();
+    formData.append('image', image);
+
+    const response = await fetch("/api/predict/cataract", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Error uploading file");
     }
 
-    const formData = new FormData();
-    formData.append("image", file);
+    const data = await response.json();
+    console.log("Response from server:", data);
+    setFetchResult(data);
+  } 
 
-    try {
-      setIsLoading(true);
-
-      const response = await fetch("/api/predict/cataract", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Error uploading file");
-      }
-
-      const data = await response.json();
-      console.log("Response from server:", data);
-      setFetchResult(data);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    } finally {
-      setIsLoading(false);
+  const handleSubmit = async (e) => {
+    if (file) {
+      handleFundusDetection(file);
+    } else {
+      alert('No file selected.');
     }
   };
 
@@ -115,15 +152,17 @@ const CataractUpload = () => {
         )}
       </div>
       <div className="text-white flex justify-center mt-2">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
+        {
+        // isLoading ? (
+        //   <p>Loading...</p>
+        // ) : (
           fetchResult && (
             <div>
               <p>Prediction: {fetchResult.predictions[0][0]}</p>
             </div>
           )
-        )}
+        // )
+        }
       </div>
     </div>
   );

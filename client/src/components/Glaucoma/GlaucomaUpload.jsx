@@ -1,16 +1,60 @@
 import { useState } from 'react';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const GlaucomaUpload = ({ result }) => {
   const [file, setFile] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
 
-  const handleSubmit = async () => {
+  const handleFundusDetection = async (image) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('image', image);
+
+    const response = await fetch('/api/detect/fundus', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('submit');
+
+    if (!response.ok) {
+      alert('Error detecting fundus');
+    } else {
+      const data = await response.json();
+
+      // Check if the image is detected as a fundus before sending it for glaucoma prediction
+      if (data.is_fundus) {
+        Swal.fire({
+          title:'Fundus Detected',
+          text: 'Uploaded image is a fundus',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        })
+        handleGlaucomaPrediction(image);
+      } else {
+        Swal.fire({
+          title:'Try Again',
+          text: 'Uploaded image is not a fundus',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+      })
+      navigate(`/getstarted`);
+      }
+    }
+  };
+  
+  const handleGlaucomaPrediction = async (image) => {
+    const formData = new FormData();
+    formData.append('image', image);
 
     const response = await fetch('/api/predict/glaucoma', {
       method: 'POST',
@@ -18,12 +62,21 @@ const GlaucomaUpload = ({ result }) => {
     });
 
     if (!response.ok) {
-      alert('Error uploading file');
+      alert('Error predicting glaucoma');
     } else {
       const data = await response.json();
       result(data);
     }
   };
+
+  const handleSubmit = () => {
+    if (file) {
+      handleFundusDetection(file);
+    } else {
+      alert('No file selected.');
+    }
+  };
+
   return (
     <div className=" p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 lg:w-[500px] md:w-[400px] w-[90vw]">
       <h4 className="mb-12 text-2xl font-semibold text-white flex justify-center">

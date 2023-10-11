@@ -1,23 +1,62 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const DRUpload = () => {
   const [file, setFile] = useState(null);
   const [data, setData] = useState(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
 
-  const handleResponse = () => {
-    setData(null);
-    setFile(null);
+  const handleFundusDetection = async (image) => {
+    const formData = new FormData();
+    formData.append('image', image);
+
+    const response = await fetch('/api/detect/fundus', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('submit');
+
+    if (!response.ok) {
+      alert('Error detecting fundus');
+    } else {
+      const data = await response.json();
+
+      // Check if the image is detected as a fundus before sending it for DR prediction
+      if (data.is_fundus) {
+        Swal.fire({
+          title:'Fundus Detected',
+          text: 'Uploaded image is a fundus',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        })
+        handleDRPrediction(image);
+      } else {
+        Swal.fire({
+          title:'Try Again',
+          text: 'Uploaded image is not a fundus',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+      })
+      navigate(`/getstarted`);
+      }
+    }
   };
 
-  const handleSubmit = async () => {
+  const handleDRPrediction = async (image) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('image', image);
 
     const response = await fetch('/api/predict/dr', {
       method: 'POST',
@@ -30,6 +69,19 @@ const DRUpload = () => {
       const temp = await response.json();
       console.log('Response from server:', temp);
       setData(temp);
+    }
+  };
+
+  const handleResponse = () => {
+    setData(null);
+    setFile(null);
+  };
+
+  const handleSubmit = async () => {
+    if (file) {
+      handleFundusDetection(file);
+    } else {
+      alert('No file selected.');
     }
   };
 
