@@ -8,24 +8,24 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase/config";
-import { useState } from "react";
-import { useEffect } from "react";
+// import { onAuthStateChanged } from "firebase/auth";
+// import { auth } from "../../firebase/config";
+// import { useState } from "react";
+// import { useEffect } from "react";
 
 const Header = () => {
 
-  const [currentUser , setCurrentUser] = useState(null);
+  // const [currentUser , setCurrentUser] = useState(null);
 
-useEffect(() => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // console.log(user);
-      setCurrentUser(user);
-    }
-  }
-)
-},[])
+// useEffect(() => {
+//   onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//       // console.log(user);
+//       setCurrentUser(user);
+//     }
+//   }
+// )
+// },[])
 
   return (
     <nav className="  bg-gray-900">
@@ -48,7 +48,7 @@ useEffect(() => {
           </ul>
         </div>
         <div>
-  {!currentUser ? (
+  {/* {!currentUser ? (
     <a href="/login">
       <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
         Login
@@ -60,7 +60,7 @@ useEffect(() => {
         {currentUser?.email?.toString(0)?.toUpperCase()}
       </button>
     </a>
-  )}
+  )} */}
 </div>
 
         {/* <div>

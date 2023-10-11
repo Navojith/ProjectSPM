@@ -50,6 +50,13 @@ const GetStarted = () => {
           </Link>
         </div>
       </div>
+      <div>
+        <Link to="/uploadImage">
+          <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+              Upload Fundus Image
+            </button> 
+        </Link>
+      </div>
     </div>
   );
 };
