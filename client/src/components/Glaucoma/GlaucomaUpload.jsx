@@ -1,11 +1,27 @@
 import { useState } from 'react';
+import { allowedExtensions } from '../../utils/regex';
+import Swal from 'sweetalert2';
 
-const GlaucomaUpload = ({ result }) => {
+const GlaucomaUpload = () => {
   const [file, setFile] = useState(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+    if (!allowedExtensions.exec(selectedFile.name)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid image type',
+        text: 'Please upload a SVG, PNG, JPG or JPEG file',
+        confirmButtonColor: '#DC2626',
+      });
+    } else {
+      console.log('File selected:', selectedFile);
+      setFile(selectedFile);
+    }
+  };
+
+  const handleResponse = () => {
+    setFile(null);
   };
 
   const handleSubmit = async () => {
@@ -16,16 +32,38 @@ const GlaucomaUpload = ({ result }) => {
       method: 'POST',
       body: formData,
     });
-
     if (!response.ok) {
-      alert('Error uploading file');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error uploading file',
+        text: 'Please try again later',
+        confirmButtonColor: 'rgb(234 88 12)',
+      });
     } else {
-      const data = await response.json();
-      result(data);
+      const temp = await response.json();
+      console.log('Response from server:', temp);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Result : \n' + temp.result,
+        text: `Accuracy : ${temp.accuracy}% \n Please contact a doctor for further diagnosis`,
+        width: '50rem',
+        showDenyButton: true,
+        showCancelButton: true,
+        showConfirmButton: false,
+        denyButtonText: 'Re-upload',
+        cancelButtonText: 'Go to Dashboard',
+      }).then((result) => {
+        if (result.isDenied) {
+          handleResponse();
+        } else {
+          window.location.href = '/getstarted';
+        }
+      });
     }
   };
   return (
-    <div className=" p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 lg:w-[500px] md:w-[400px] w-[90vw]">
+    <div className="justify-self-center w-7/12 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 m-5">
       <h4 className="mb-12 text-2xl font-semibold text-white flex justify-center">
         Glaucoma detection
       </h4>
@@ -55,7 +93,7 @@ const GlaucomaUpload = ({ result }) => {
               drop
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              SVG, PNG, JPG or GIF (MAX. 800x400px)
+              SVG, PNG, JPG or JPEG (MAX. 800x400px)
             </p>
           </div>
           <input
@@ -69,12 +107,12 @@ const GlaucomaUpload = ({ result }) => {
 
       <div className="flex justify-center">
         {file && (
-          <div className="w-1/4 bg-white border border-gray-200 rounded-lg shadow m-12 p-5">
+          <div className=" bg-white border border-gray-200 rounded-lg shadow m-9 p-3">
             {file && (
               <img
                 src={URL.createObjectURL(file)}
                 alt="Uploaded"
-                className="rounded-lg"
+                className="rounded-lg w-80"
               />
             )}
           </div>

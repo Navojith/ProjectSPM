@@ -47,14 +47,15 @@ def predict_glaucoma(request):
 
             # Make predictions
             prediction = model.predict(np.expand_dims(preprocessed_image, axis=0))
+            print(prediction[0][0])
+            accuracy = round(prediction[0][0] * 100, 2) 
 
             # Interpret the prediction
-            if prediction[0][0] > 0.5:
+            if accuracy < 50:
                 result = "Glaucoma Positive"
+                accuracy = 100 - accuracy
             else:
                 result = "Glaucoma Negative"
-
-            accuracy = round(prediction[0][0] * 100, 2) 
 
             return jsonify({'result': result, 'accuracy': accuracy})
 
