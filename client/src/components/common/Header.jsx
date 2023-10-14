@@ -8,10 +8,6 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
-// import { onAuthStateChanged } from "firebase/auth";
-// import { auth } from "../../firebase/config";
-// import { useState } from "react";
-// import { useEffect } from "react";
 
 const Header = () => {
 

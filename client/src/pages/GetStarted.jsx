@@ -13,22 +13,22 @@ const GetStarted = () => {
             and blindness in people who have diabetes.
           </p>
           <Link to="/diabeticRetinopathy">
-            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+            <button className="align-bottom bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-10 rounded-full">
               Test now
             </button>
             </Link>  
         </div>
       </div>
 
-      <div className="max-w-sm bg-white shadow-md rounded-md overflow-hidden m-2">
-        <div className="p-4">
+      <div className=" max-w-sm bg-white shadow-md rounded-md overflow-hidden m-2">
+        <div className="p-4 flex flex-col items-stretch">
           <h2 className="text-2xl font-semibold text-gray-800">Cataract</h2>
           <p className="text-gray-600 mt-2">
-            Cataract is a clouding of the eye's natural lens, which lies behind
+            Cataract is a clouding of the eye&apos;s natural lens, which lies behind
             the iris and the pupil.
           </p>
           <Link to="/getstarted/cataract">
-            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+            <button className="self-end bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-16 rounded-full">
               Test now
             </button>
            </Link> 

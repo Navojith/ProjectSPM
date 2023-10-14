@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { allowedExtensions } from '../../utils/regex';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,9 +9,20 @@ const DRUpload = () => {
   const [data, setData] = useState(null);
   const navigate = useNavigate();
 
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+    if (!allowedExtensions.exec(selectedFile.name)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid image type',
+        text: 'Please upload a SVG, PNG, JPG or JPEG file',
+        confirmButtonColor: '#DC2626',
+      });
+    } else {
+      console.log('File selected:', selectedFile);
+      setFile(selectedFile);
+    }
   };
 
   const handleFundusDetection = async (image) => {
@@ -39,7 +51,7 @@ const DRUpload = () => {
           timer: 2000,
           timerProgressBar: true
         })
-        handleDRPrediction(image);
+        handleSubmit(image);
       } else {
         Swal.fire({
           title:'Try Again',
@@ -54,9 +66,15 @@ const DRUpload = () => {
     }
   };
 
-  const handleDRPrediction = async (image) => {
+//   const handleDRPrediction = async (image) => {
+
+//   const handleResponse = () => {
+//     setFile(null);
+//   };
+
+  const handleSecondOpinion = async () => {
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append('image', file);
 
     const response = await fetch('/api/predict/dr', {
       method: 'POST',
@@ -64,11 +82,90 @@ const DRUpload = () => {
     });
 
     if (!response.ok) {
-      alert('Error uploading file');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error uploading file',
+        text: 'Please try again later',
+        confirmButtonColor: 'rgb(234 88 12)',
+      });
     } else {
       const temp = await response.json();
       console.log('Response from server:', temp);
-      setData(temp);
+
+      Swal.fire({
+        icon:
+          temp.predictions === 'Mild Diabetic Retinopathy' ||
+          temp.predictions === 'Moderate Diabetic Retinopathy' ||
+          temp.predictions === 'Severe Diabetic Retinopathy' ||
+          temp.predictions === 'Proliferate Diabetic Retinopathy'
+            ? 'warning'
+            : 'success',
+        title: 'Second result : \n' + temp.predictions,
+        text: temp.confidence && 'Confidence: ' + temp.confidence * 100 + '%',
+        width: '50rem',
+        showConfirmButton: false,
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonColor: 'rgb(234 88 12)',
+        denyButtonText: 'Re-upload',
+        cancelButtonText: 'Go to Dashboard',
+      }).then((result) => {
+        if (result.isDenied) {
+          handleResponse();
+        } else {
+          window.location.href = '/getstarted';
+        }
+      });
+    };
+//   }
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch('/api/predict/dr2', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error uploading file',
+        text: 'Please try again later',
+        confirmButtonColor: 'rgb(234 88 12)',
+      });
+    } else {
+      const temp = await response.json();
+      console.log('Response from server:', temp);
+
+      Swal.fire({
+        icon:
+          temp.predictions === 'Mild Diabetic Retinopathy' ||
+          temp.predictions === 'Moderate Diabetic Retinopathy' ||
+          temp.predictions === 'Severe Diabetic Retinopathy' ||
+          temp.predictions === 'Proliferate Diabetic Retinopathy'
+            ? 'warning'
+            : 'success',
+        title: 'Result : \n' + temp.predictions,
+        text: 'Please contact a doctor for further diagnosis',
+        width: '50rem',
+        showDenyButton: true,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonColor: 'rgb(234 88 12)',
+        confirmButtonText: 'Get result using another model',
+        denyButtonText: 'Re-upload',
+        cancelButtonText: 'Go to Dashboard',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleSecondOpinion();
+        } else if (result.isDenied) {
+          handleResponse();
+        } else {
+          window.location.href = '/getstarted';
+        }
+      });
     }
   };
 
@@ -77,7 +174,7 @@ const DRUpload = () => {
     setFile(null);
   };
 
-  const handleSubmit = async () => {
+  const handleDR = async () => {
     if (file) {
       handleFundusDetection(file);
     } else {
@@ -116,7 +213,7 @@ const DRUpload = () => {
               drop
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              SVG, PNG, JPG or GIF (MAX. 800x400px)
+              SVG, PNG, JPG or JPEG (MAX. 800x400px)
             </p>
           </div>
           <input
@@ -147,80 +244,12 @@ const DRUpload = () => {
           <button
             type="submit"
             className="w-80 rounded-full bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
-            onClick={handleSubmit}
+            onClick={handleDR}
           >
             Submit
           </button>
         )}
       </div>
-      {data && (
-        <div
-          className="relative z-10"
-          aria-labelledby="modal-title"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-
-          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        x="0px"
-                        y="0px"
-                        width="48"
-                        height="48"
-                        viewBox="0 0 48 48"
-                      >
-                        <path
-                          fill="#c8e6c9"
-                          d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"
-                        ></path>
-                        <path
-                          fill="#4caf50"
-                          d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <h3
-                        className="text-base font-semibold leading-6 text-gray-900"
-                        id="modal-title"
-                      >
-                        Prediction: {data.predictions}
-                      </h3>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          Confidence: {data.confidence * 100}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    onClick={handleResponse}
-                  >
-                    Re-upload
-                  </button>
-                  <Link
-                    to="/getstarted"
-                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                  >
-                    Go to Dashboard
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

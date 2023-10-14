@@ -5,6 +5,7 @@ from app.controllers import cataract_controller
 from app.controllers import glaucoma_controller
 from app.controllers import diabeticRetinopathy_controller
 from app.controllers import detection_controller
+from app.controllers import DR_controllerV2
 
 @app.route('/')
 def index():
@@ -26,3 +27,7 @@ def predict_DR():
 @app.route('/detect/fundus',methods=['POST'])
 def detect_fundus():
     return  detection_controller.detect_fundus(request)
+
+@app.route('/predict/dr2', methods=['POST'])
+def predict_DR2():
+    return DR_controllerV2.predict_DR(request)
