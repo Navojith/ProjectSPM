@@ -1,49 +1,80 @@
 import React, { useEffect, useState } from "react";
+import { allowedExtensions } from "../../utils/regex";
+import Swal from "sweetalert2";
 
 const CataractUpload = () => {
   const [file, setFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFileSet, setIsFileSet] = useState(false);
   const [fetchResult, setFetchResult] = useState(null);
+  const [predictionText, setPredictionText] = useState(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    setIsFileSet(true);
+    if (!allowedExtensions.exec(selectedFile.name)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid image type",
+        text: "Please upload a SVG, PNG, JPG or JPEG file",
+        confirmButtonColor: "#DC2626",
+      });
+    } else {
+      console.log("File selected:", selectedFile);
+      setFile(selectedFile);
+      setIsFileSet(true);
+    }
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!file) {
-      alert("Please select a file.");
-      return;
-    }
-
+  
     const formData = new FormData();
     formData.append("image", file);
-
-    try {
-      setIsLoading(true);
-
-      const response = await fetch("/api/predict/cataract", {
-        method: "POST",
-        body: formData,
+  
+    const response = await fetch("/api/predict/cataract", {
+      method: "POST",
+      body: formData,
+    });
+  
+    if (!response.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Error uploading file",
+        text: "Please try again later",
+        confirmButtonColor: "rgb(234 88 12)",
       });
-
-      if (!response.ok) {
-        throw new Error("Error uploading file");
-      }
-
+      throw new Error("Error uploading file");
+    }
+  
+    if (response.ok) {
       const data = await response.json();
       console.log("Response from server:", data);
+  
+      let predictionText = "error"; // Default value
+  
+      if (data.predictions < 0.5) {
+        predictionText = "Normal";
+      } else if (data.predictions >= 0.5 && data.predictions < 0.6) {
+        predictionText = "Mild Cataract";
+      } else if (data.predictions >= 0.6 && data.predictions < 0.7) {
+        predictionText = "Moderate Cataract";
+      } else if (data.predictions >= 0.7) {
+        predictionText = "Severe Cataract";
+      }
+  
+      setPredictionText(predictionText);
       setFetchResult(data);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    } finally {
-      setIsLoading(false);
+  
+      Swal.fire({
+        icon: "success",
+        title: "Prediction Score : " + data.predictions + "\n" + predictionText,
+        text: "Please contact a doctor for further diagnosis",
+        width: "50rem",
+        confirmButtonColor: "rgb(234 88 12)",
+      });
     }
   };
+  
 
   return (
     <div className="my-10 justify-self-center p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 lg:w-[500px] md:w-[400px] w-[90vw]">
@@ -112,17 +143,6 @@ const CataractUpload = () => {
           >
             Submit
           </button>
-        )}
-      </div>
-      <div className="text-white flex justify-center mt-2">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          fetchResult && (
-            <div>
-              <p>Prediction: {fetchResult.predictions[0][0]}</p>
-            </div>
-          )
         )}
       </div>
     </div>
