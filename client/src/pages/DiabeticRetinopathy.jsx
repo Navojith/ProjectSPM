@@ -1,11 +1,11 @@
-import DRUpload from "../components/DiabeticRetinopathy/DRUpload"
+import DRUpload from '../components/DiabeticRetinopathy/DRUpload';
 
 const DiabeticRetinopathy = () => {
   return (
     <div className="flex justify-center">
       <DRUpload />
     </div>
-  )
-}
+  );
+};
 
-export default DiabeticRetinopathy
+export default DiabeticRetinopathy;

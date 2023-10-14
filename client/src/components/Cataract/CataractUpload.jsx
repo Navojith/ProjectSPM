@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from "react";
-import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { allowedExtensions } from "../../utils/regex";
+import Swal from "sweetalert2";
 
 const CataractUpload = () => {
   const [file, setFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFileSet, setIsFileSet] = useState(false);
   const [fetchResult, setFetchResult] = useState(null);
   const navigate = useNavigate();
+  const [predictionText, setPredictionText] = useState(null);
+
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    setIsFileSet(true);
+    if (!allowedExtensions.exec(selectedFile.name)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid image type",
+        text: "Please upload a SVG, PNG, JPG or JPEG file",
+        confirmButtonColor: "#DC2626",
+      });
+    } else {
+      console.log("File selected:", selectedFile);
+      setFile(selectedFile);
+      setIsFileSet(true);
+    }
   };
 
   const handleFundusDetection = async (image) => {
@@ -41,7 +52,7 @@ const CataractUpload = () => {
           timer: 2000,
           timerProgressBar: true
         })
-        handleCataractPrediction(image);
+        handleSubmit(image);
       } else {
         Swal.fire({
           title:'Try Again',
@@ -56,10 +67,19 @@ const CataractUpload = () => {
     }
   };
 
-  const handleCataractPrediction = async (image) => {
-    const formData = new FormData();
-    formData.append('image', image);
+//   const handleCataractPrediction = async (image) => {
+//     const formData = new FormData();
+//     formData.append('image', image);
 
+// =======
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append("image", file);
+ 
     const response = await fetch("/api/predict/cataract", {
       method: "POST",
       body: formData,
@@ -74,13 +94,51 @@ const CataractUpload = () => {
     setFetchResult(data);
   } 
 
-  const handleSubmit = async (e) => {
+  const handleCataract = async (e) => {
     if (file) {
       handleFundusDetection(file);
     } else {
       alert('No file selected.');
+  
+    if (!response.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Error uploading file",
+        text: "Please try again later",
+        confirmButtonColor: "rgb(234 88 12)",
+      });
+      throw new Error("Error uploading file");
+    }
+  
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Response from server:", data);
+  
+      let predictionText = "error"; // Default value
+  
+      if (data.predictions < 0.5) {
+        predictionText = "Normal";
+      } else if (data.predictions >= 0.5 && data.predictions < 0.6) {
+        predictionText = "Mild Cataract";
+      } else if (data.predictions >= 0.6 && data.predictions < 0.7) {
+        predictionText = "Moderate Cataract";
+      } else if (data.predictions >= 0.7) {
+        predictionText = "Severe Cataract";
+      }
+  
+      setPredictionText(predictionText);
+      setFetchResult(data);
+  
+      Swal.fire({
+        icon: "success",
+        title: "Prediction Score : " + data.predictions + "\n" + predictionText,
+        text: "Please contact a doctor for further diagnosis",
+        width: "50rem",
+        confirmButtonColor: "rgb(234 88 12)",
+      });
     }
   };
+  
 
   return (
     <div className="my-10 justify-self-center p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 lg:w-[500px] md:w-[400px] w-[90vw]">
@@ -145,7 +203,7 @@ const CataractUpload = () => {
           <button
             type="submit"
             className="w-80 rounded-full bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
-            onClick={handleSubmit}
+            onClick={handleCataract}
           >
             Submit
           </button>
