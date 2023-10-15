@@ -23,10 +23,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
+    "react-image-crop": "^10.1.8",
     "react-router-dom": "^6.15.0",
     "sort-by": "^1.2.0",
     "styled-components": "^6.0.8",
-    "sweetalert2": "^11.7.32",
+    "sweetalert2": "11.7.32",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

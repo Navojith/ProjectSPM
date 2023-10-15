@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 
 const GetStarted = () => {
-  return (
+   return (
     <div className="container mx-auto mt-10 flex flex-wrap justify-center">
       <div className="max-w-sm bg-white shadow-md rounded-md overflow-hidden m-2">
         <div className="p-4">
@@ -16,7 +16,7 @@ const GetStarted = () => {
             <button className="align-bottom bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-10 rounded-full">
               Test now
             </button>
-          </Link>
+            </Link>  
         </div>
       </div>
 
@@ -31,7 +31,7 @@ const GetStarted = () => {
             <button className="self-end bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-16 rounded-full">
               Test now
             </button>
-          </Link>
+           </Link> 
         </div>
       </div>
 
@@ -47,8 +47,10 @@ const GetStarted = () => {
             <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
               Test now
             </button>
-          </Link>
+          </Link>  
         </div>
+      </div>
+      <div>    
       </div>
     </div>
   );

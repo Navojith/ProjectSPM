@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import Member from '../components/Members';
 import Pawara from '/assets/images/pawara.jpg';
 import Chamithu from '/assets/images/chamithu.jpeg';
+import Shenan from '/assets/images/shenan.jpg';
 import Dinal from '/assets/images/Dinal.jpg';
 
 const Landing = () => {
@@ -65,7 +66,10 @@ const Landing = () => {
                 linkedIn="https://www.linkedin.com/in/chamithu-gunawardana-009909215/"
                 name={'Chamithu Gunawardana'}
               />
-              <Member github="" img={''} linkedIn="" name={'Shenan Perera'} />
+              <Member github="https://github.com/ShenanPerera" 
+              img={Shenan} 
+              linkedIn="https://www.linkedin.com/in/shenan-perera/" 
+              name={'Shenan Perera'} />
             </div>
           </center>
         </div>

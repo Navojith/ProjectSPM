@@ -1,15 +1,28 @@
-// import {
-//   ArrowPathIcon,
-//   Bars3Icon,
-//   ChartPieIcon,
-//   CursorArrowRaysIcon,
-//   FingerPrintIcon,
-//   SquaresPlusIcon,
-//   XMarkIcon,
-// } from "@heroicons/react/24/outline";
-// import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
+import {
+  ArrowPathIcon,
+  Bars3Icon,
+  ChartPieIcon,
+  CursorArrowRaysIcon,
+  FingerPrintIcon,
+  SquaresPlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 
 const Header = () => {
+
+  // const [currentUser , setCurrentUser] = useState(null);
+
+// useEffect(() => {
+//   onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//       // console.log(user);
+//       setCurrentUser(user);
+//     }
+//   }
+// )
+// },[])
+
   return (
     <nav className="  bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -31,11 +44,36 @@ const Header = () => {
           </ul>
         </div>
         <div>
-           <a href = "/signup">
-            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
-              SignUp
-            </button>
-            </a>  </div>
+  {/* {!currentUser ? (
+    <a href="/login">
+      <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+        Login
+      </button>
+    </a>
+  ) : (
+    <a href="/profile">
+      <button className="bg-orange-500 hover-bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+        {currentUser?.email?.toString(0)?.toUpperCase()}
+      </button>
+    </a>
+  )} */}
+</div>
+
+        {/* <div>
+           <a href = "/login">
+           {!currentUser ? (
+                <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+                Login
+              </button>
+            ) : (
+              <a href ="profile">
+              <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 mt-4 rounded-full">
+                {currentUser?.email?.toString(0)?.toUpperCase()}  
+                </button> 
+                </a>   
+            )}
+            
+            </a>  </div> */}
         </div> 
     </nav>
   );
