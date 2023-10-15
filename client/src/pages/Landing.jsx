@@ -28,9 +28,7 @@ const Landing = () => {
               Retina
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Ocular disease recognition leveraging cnn Anim aute id magna
-              aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat
-              commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua.
+              Ocular disease recognition leveraging CNN
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
@@ -66,10 +64,12 @@ const Landing = () => {
                 linkedIn="https://www.linkedin.com/in/chamithu-gunawardana-009909215/"
                 name={'Chamithu Gunawardana'}
               />
-              <Member github="https://github.com/ShenanPerera" 
-              img={Shenan} 
-              linkedIn="https://www.linkedin.com/in/shenan-perera/" 
-              name={'Shenan Perera'} />
+              <Member
+                github="https://github.com/ShenanPerera"
+                img={Shenan}
+                linkedIn="https://www.linkedin.com/in/shenan-perera/"
+                name={'Shenan Perera'}
+              />
             </div>
           </center>
         </div>

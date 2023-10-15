@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 const GlaucomaUpload = () => {
   const [file, setFile] = useState(null);
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!allowedExtensions.exec(selectedFile.name)) {
@@ -13,7 +14,6 @@ const GlaucomaUpload = () => {
         text: 'Please upload a SVG, PNG, JPG or JPEG file',
         confirmButtonColor: '#DC2626',
       });
-      setFile(null);
     } else {
       console.log('File selected:', selectedFile);
       setFile(selectedFile);
