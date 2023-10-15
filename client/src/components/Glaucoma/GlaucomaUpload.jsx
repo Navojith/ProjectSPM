@@ -13,6 +13,7 @@ const GlaucomaUpload = () => {
         text: 'Please upload a SVG, PNG, JPG or JPEG file',
         confirmButtonColor: '#DC2626',
       });
+      setFile(null);
     } else {
       console.log('File selected:', selectedFile);
       setFile(selectedFile);
