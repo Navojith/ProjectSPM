@@ -236,6 +236,7 @@ const CataractUpload = () => {
   const [file, setFile] = useState(null);
   const [fetchResult, setFetchResult] = useState(null);
   const [predictionText, setPredictionText] = useState(null);
+  const [isLoading , setIsLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -254,42 +255,46 @@ const CataractUpload = () => {
   };
 
   const handleFundusDetection = async () => {
-    const formData = new FormData();
-    formData.append('image', file);
+    setIsLoading(true);
 
-    const response = await fetch('/api/detect/fundus', {
-      method: 'POST',
-      body: formData,
-    });
+    try{
+      const formData = new FormData();
+      formData.append('image', file);
 
-    console.log('submit');
+      const response = await fetch('/api/detect/fundus', {
+        method: 'POST',
+        body: formData,
+      });
 
-    if (!response.ok) {
-      alert('Error uploading file');
-    } else {
-      const data = await response.json();
-      console.log(data)
+      console.log('submit');
+
+      if (!response.ok) {
+        alert('Error uploading file');
+      } else {
+        const data = await response.json();
+        console.log(data)
       
-      if(data.is_fundus == true){
-      Swal.fire({
-        title: 'Fundus Detected',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 5000,
-        timerProgressBar: true
-    })
-    handleSubmit(file)
-  }
-    else{
-      Swal.fire({
-        title: 'Not a fundus.Try Again!',
-        icon: 'error',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true
-    })
-    }
-
+        if(data.is_fundus == true){
+        Swal.fire({
+          title: 'Fundus Detected',
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: true
+        })
+        handleSubmit(file)
+      }
+      else{
+        Swal.fire({
+          title: 'Not a fundus.Try Again!',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true
+        })
+      }}
+    }finally {
+      setIsLoading(false); 
     }
   };
 
@@ -409,6 +414,7 @@ const CataractUpload = () => {
             type="submit"
             className="w-80 rounded-full bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
             onClick={handleFundusDetection}
+            disabled = {isLoading}
           >
             Submit
           </button>

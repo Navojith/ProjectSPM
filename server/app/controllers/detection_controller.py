@@ -11,7 +11,7 @@ import torch.nn as nn
 
 app = Flask(__name__)
 
-model = torch.hub.load("ultralytics/yolov5", "custom" , path='app\models\detection.pt')
+model = torch.hub.load("ultralytics/yolov5", "custom" , path='app/models/detection.pt')
 
 def detect_fundus(request):
 

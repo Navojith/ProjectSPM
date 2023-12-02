@@ -158,6 +158,7 @@ import Swal from 'sweetalert2';
 
 const GlaucomaUpload = () => {
   const [file, setFile] = useState(null);
+  const [isLoading , setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
@@ -180,6 +181,9 @@ const GlaucomaUpload = () => {
   };
 
   const handleFundusDetection = async (image) => {
+    setIsLoading(true);
+
+    try{
     const formData = new FormData();
     formData.append('image', image);
 
@@ -217,6 +221,8 @@ const GlaucomaUpload = () => {
       })
       navigate(`/getstarted`);
       }
+    }} finally{
+      setIsLoading(false);
     }
   };
   
@@ -331,6 +337,7 @@ const GlaucomaUpload = () => {
             type="submit"
             className="w-80 rounded-full bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
             onClick={handleSubmit}
+            disabled={isLoading}
           >
             Submit
           </button>
