@@ -6,8 +6,6 @@ Web app for Ocular disease recognition leveraging CNN
 `yarn install` <br /><br />
 `npm run dev`
 
-***
-
 ### Server - Flask
 ### Setting Up a Virtual Environment
 It's recommended to create a virtual environment to isolate project dependencies. Open a terminal navigate to the root directory of the project and run the following commands:
@@ -38,10 +36,3 @@ pip freeze > requirements.txt
 ```
 python main.py
 ```
-
-
-
-
-
-
-
