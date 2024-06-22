@@ -264,6 +264,7 @@ import Swal from 'sweetalert2';
 
 const DRUpload = () => {
   const [file, setFile] = useState(null);
+  const [isLoading , setIsLoading] =useState(false);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -383,6 +384,9 @@ const DRUpload = () => {
 
   
   const handleFundusDetection = async () => {
+    setIsLoading(true);
+
+    try{
     const formData = new FormData();
     formData.append('image', file);
 
@@ -419,6 +423,8 @@ const DRUpload = () => {
     })
     }
 
+    }}finally{
+      setIsLoading(false);
     }
   };
 
@@ -485,6 +491,7 @@ const DRUpload = () => {
             type="submit"
             className="w-80 rounded-full bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
             onClick={handleFundusDetection}
+            disabled={isLoading}
           >
             Submit
           </button>
